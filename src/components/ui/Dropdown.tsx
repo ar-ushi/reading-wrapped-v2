@@ -1,6 +1,6 @@
 import type { Component, JSX } from "solid-js";
+import { getSlots } from "../../helpers/getSlots";
 interface DropdownProps extends JSX.HTMLAttributes<HTMLSelectElement> {
-  label?: JSX.Element; // slot for custom label content
   class?: string;
   range?: { from: number; to: number };
   descending?: boolean;
@@ -8,30 +8,44 @@ interface DropdownProps extends JSX.HTMLAttributes<HTMLSelectElement> {
 
 const Dropdown: Component<DropdownProps> = (props) => {
   const {
-    label,
     class: className = "",
     children,
     range,
     descending = true,
     ...rest
   } = props;
-
+  const slots = getSlots(children);
   const rangeOptions = () => {
     if (!range) return [];
 
     const { from, to } = range;
     const list = Array.from({ length: Math.abs(to - from) + 1 }, (_, i) =>
-      descending ? to - i : from + i
+      descending ? to - i : from + i,
     );
 
     return list;
   };
 
   return (
-    <label class="flex flex-col gap-1 text-primary">
-      {label && <span>{label}</span>}
+    <label class={className}>
+      {slots.label}
 
-      <select class={className} {...rest}>
+      <select
+        class={`
+          appearance-none
+        px-4 py-2
+        rounded-xl
+        border border-gray-300
+        bg-white
+        text-gray-800
+        text-sm
+        shadow-sm
+        focus:outline-none
+        transition
+        cursor-pointer
+  `}
+        {...rest}
+      >
         {range
           ? rangeOptions().map((value) => (
               <option value={value}>{value}</option>

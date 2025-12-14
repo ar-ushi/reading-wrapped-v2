@@ -25,3 +25,7 @@ code {
       margin-block-start: 0em;
     margin-block-end: 0em;
 }
+
+.regular{
+  font-weight: 400;
+}
