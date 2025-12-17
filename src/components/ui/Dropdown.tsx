@@ -2,6 +2,7 @@ import type { Component, JSX } from "solid-js";
 import { getSlots } from "../../helpers/getSlots";
 interface DropdownProps extends JSX.HTMLAttributes<HTMLSelectElement> {
   class?: string;
+  value?: string | Number;
   range?: { from: number; to: number };
   descending?: boolean;
 }

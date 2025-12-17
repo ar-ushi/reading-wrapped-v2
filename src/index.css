@@ -16,6 +16,9 @@ code {
 .text-primary{
   color: #92487A;
 }
+.bg-primary{
+  background-color: #92487A;
+}
 
 .text-secondary{
   color: #E49BA6;
