@@ -1,13 +1,17 @@
-export function deriveBehaviors({ books, year, heroes, aggregates }: any) {
+let baselineMedianBooksReadPerMonth: number;
+export function deriveBehaviors(books: any, year: number, aggregates: any) {
   return {
     rereadRatio:
       Math.round((aggregates.total_rereads / aggregates.total_books) * 10000) /
       100,
     dnfRatio:
-      Math.round((aggregates.total_dnf / aggregates.total_books) * 10000) / 100,
+      Math.round(
+        (aggregates.total_dnfs_for_year / aggregates.total_books) * 10000,
+      ) / 100,
     bingeMonths: computeBingeMonths(aggregates.booksPerMonth),
     harshRater: aggregates.avg_rating < 3.5,
     tbrYears: tbrYearBehavior(books, year),
+    baselineMedianBooksReadPerMonth,
   };
 } /** understanding if reader picked up more books from tbr or new releases */
 
@@ -16,20 +20,31 @@ function computeBingeMonths(booksPerMonth: Record<string, number>) {
   if (counts.length === 0) return [];
 
   const sorted = [...counts].sort((a, b) => a - b);
-  const median = sorted[Math.floor(sorted.length / 2)] || 0;
+  baselineMedianBooksReadPerMonth = sorted[Math.floor(sorted.length / 2)] || 0;
 
   return Object.entries(booksPerMonth)
-    .filter(([, count]) => count >= Math.max(median * 2, median + 2))
+    .filter(
+      ([, count]) =>
+        count >=
+        Math.max(
+          baselineMedianBooksReadPerMonth * 2,
+          baselineMedianBooksReadPerMonth + 2,
+        ),
+    )
     .map(([month]) => month);
 }
+function tbrYearBehavior(books: any[], year: number) {
+  const newReleases = books.filter(
+    (b: { publication_year: number }) => b.publication_year === year,
+  );
 
+  const prevYearMap: Record<number, number> = {};
+  books
+    .filter((b) => b.publication_year !== year)
+    .forEach((b) => {
+      const pubYear = b.publication_year;
+      prevYearMap[pubYear] = (prevYearMap[pubYear] || 0) + 1;
+    });
 
-function tbrYearBehavior(books: any[], year: any){
-  let prevYearMap :Record<number, number> = {};
-  const newReleases = books.filter((b : {publication_year: Number}) => b.publication_year === year);
-  const previousYears = books.filter((b : {publication_year: Number}) => b.publication_year !== year).map((b : {date_added: Date}) => {
-    const year = b.date_added.getFullYear();
-    prevYearMap[year]++;
-  });
-  return {prevYearMap, newReleases}
+  return { newReleases, prevYearMap };
 }

@@ -1,15 +1,25 @@
-export function computeAverages({ books, heroes }: any) {
-  const highestRatedBook = books.sort(byRating)[books.length - 1];
-  const lowestRatedBook = books.sort(byRating)[0];
-  const longestBook = books.sort(byPages)[books.length - 1];
-  const shortestBook = books.sort(byPages)[0];
+import { byPages, byRating } from "../utils/aggregatorUtils";
+export function computeAverages(books: any[]) {
+  const lowestRatedBook = books.sort(byRating)[books.length - 1];
+  const highestRatedBook = books.sort(byRating)[0];
+  const shortestBook = books.sort(byPages)[books.length - 1];
+  const longestBook = books.sort(byPages)[0];
+  const mostReadAuthor = computedMostReadAuthor(books);
   return {
     avg_rating: getAverage(books, "rating"),
-    avg_pages: getAverage(books, "pages"),
+    avg_pages: Math.round(getAverage(books, "pages")),
     highestRatedBook,
     lowestRatedBook,
     longestBook,
     shortestBook,
+    mostReadAuthor,
+    hero: {
+      highestRatedBook,
+      lowestRatedBook,
+      longestBook,
+      shortestBook,
+      mostReadAuthor,
+    },
   };
 }
 
@@ -27,6 +37,47 @@ function getAverage<T extends Record<string, any>>(
   return sum / books.length;
 }
 
-const byRating = (a: any, b: any) => (b.rating ?? 0) - (a.rating ?? 0);
+function computedMostReadAuthor(books: any[]) {
+  const freqMap = new Map<string, [any[], number]>();
 
-const byPages = (a: any, b: any) => (b.pages ?? 0) - (a.pages ?? 0);
+  for (const book of books) {
+    const author = book.author;
+    const title = book.title;
+    const isbn = book.isbn;
+
+    const existing = freqMap.get(author);
+
+    if (!existing) {
+      const obj = {
+        title: title,
+        isbn: isbn,
+      };
+      freqMap.set(author, [[obj], 1]);
+    } else {
+      const [obj, count] = existing;
+      obj.push({
+        title: title,
+        isbn: isbn,
+      });
+      freqMap.set(author, [obj, count + 1]);
+    }
+  }
+
+  let maxAuthor: string | null = null;
+  let maxCount = 0;
+  let maxInfo: object[] = [];
+
+  for (const [author, [info, count]] of freqMap) {
+    if (count > maxCount) {
+      maxCount = count;
+      maxAuthor = author;
+      maxInfo = info;
+    }
+  }
+
+  return {
+    author: maxAuthor,
+    count: maxCount,
+    info: maxInfo,
+  };
+}

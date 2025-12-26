@@ -1,5 +1,6 @@
 export function normalizeData(raw: any[]) {
   return raw.map((r) => ({
+    id: Number(r["Book Id"]),
     title: r["Title"],
     author: r["Author"],
     rating: Number(r["My Rating"]),
@@ -10,10 +11,11 @@ export function normalizeData(raw: any[]) {
     publication_year: Number(r["Original Publication Year"]),
     bookshelves: r["Bookshelves"],
     type: r["Binding"],
+    isbn:  Number(r["ISBN13"].replace(/\D/g, '')),
     publisher: r["Publisher"],
     is_reread: r["Read Count"] > 1,
     dnf: ["dnf", "didnotfinish", "did-not-finish"].includes(r["Bookshelves"]),
-    review: r['My Review']
+    review: r["My Review"],
   }));
 }
 

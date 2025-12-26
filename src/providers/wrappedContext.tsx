@@ -4,7 +4,7 @@ import { createStore } from 'solid-js/store';
 interface WrappedStore {
    year: number | null;
   file: File | null;
-  parsedData: ParsedReadingData | null;
+  parsedData: any | null;
 }
 
 const WrappedContext = createContext<{
