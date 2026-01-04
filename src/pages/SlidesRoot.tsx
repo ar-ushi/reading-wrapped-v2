@@ -1,6 +1,6 @@
 import { Component, createSignal, onCleanup, onMount } from "solid-js";
 import { Motion } from "solid-motionone";
-import { Slide1 } from "../components/slides/Slide1";
+import { Slide1, Slide2, Slide3, Slide4 } from "../components/slides";
 
 const AUTO_ADVANCE_MS = 30_000;
 
@@ -8,7 +8,8 @@ const SlidesRoot: Component<{}> = () => {
   const [index, setIndex] = createSignal(0);
   let timer: number | undefined;
 
-  const slides = [<Slide1></Slide1>];
+  const slides = [Slide1, Slide2, Slide3, Slide4];
+  const Slide = slides[index()];
 
   function next() {
     setIndex((i) => Math.min(i + 1, slides.length - 1));
@@ -25,11 +26,9 @@ const SlidesRoot: Component<{}> = () => {
   }
 
   function autoAdvance() {
-    setIndex((i) => {
-      if (i >= slides.length - 1) return i;
-      return i + 1;
-    });
+    setIndex((i) => (i + 1) % slides.length);
   }
+
   onMount(() => {
     timer = window.setInterval(autoAdvance, AUTO_ADVANCE_MS);
   });
@@ -45,7 +44,11 @@ const SlidesRoot: Component<{}> = () => {
         animate={{ transform: `translateY(-${index() * 100}vh)` }}
         transition={{ duration: 0.6, easing: "ease-in-out" }}
       >
-        <div class="h-screen w-full">{slides[index()]}</div>
+        {slides.map((SlideComp) => (
+          <div class="h-screen w-full">
+            <SlideComp />
+          </div>
+        ))}
       </Motion.div>
 
       <div class="hidden md:flex absolute inset-y-0 left-6 items-center">
@@ -59,6 +62,17 @@ const SlidesRoot: Component<{}> = () => {
           aria-label="Previous slide"
         >
           ←
+        </button>
+        <button
+          onClick={next}
+          class="
+            text-white text-2xl
+            opacity-30 hover:opacity-70
+            transition
+          "
+          aria-label="Previous slide"
+        >
+          -
         </button>
       </div>
     </div>

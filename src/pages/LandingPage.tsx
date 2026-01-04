@@ -21,7 +21,7 @@ const LandingPage: Component = () => {
     <Show
       when={state.parsedData}
       fallback={
-        <div class="min-h-screen flex flex-col justify-center items-center px-4 gap-3">
+        <div class="min-h-screen flex flex-col justify-center items-center px-4 gap-3 bg-tertiary">
           <Heading variant="h1" class="text-primary" compact>
             Your Year in Books
           </Heading>
@@ -73,7 +73,6 @@ const LandingPage: Component = () => {
             </Show>
           </div>
 
-          <hr />
           <HowTo />
         </div>
       }

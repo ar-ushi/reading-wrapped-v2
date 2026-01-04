@@ -1,47 +1,72 @@
 import { Component, For } from "solid-js";
 import { Motion } from "solid-motionone";
 import { useWrappedSession } from "../../providers/wrappedContext";
+import { CountUp } from "../CountUp";
+import Stat from "../Stat";
+import AnimatedBlobs from "../AnimatedBlobs";
+import { Heading } from "../ui";
 
 export const Slide1: Component = () => {
   const { state } = useWrappedSession();
   const totals = state.parsedData?.totals;
-  const hero = totals.hero.top5;
-
+  const hero = totals?.hero.top5 ?? [];
+  const year = state.year;
+  const stats = [
+    {
+      label: "Books Read",
+      value: totals.total_books,
+    },
+    {
+      label: "Pages turned",
+      value: totals.total_pages,
+    },
+    {
+      label: "Minutes spent reading",
+      value: totals.total_reading_minutes,
+    },
+  ];
   return (
     <section
       class="
-    w-full h-screen
-    flex flex-col  md:flex-row-reverse
-    items-center justify-center
-    px-4 md:px-16
-    bg-gradient-to-br from-neutral-900 to-neutral-800
-    text-white
-  "
+        relative w-full h-screen
+        flex flex-col md:flex-row-reverse
+        items-center justify-center
+        bg-gradient-to-b from-blue-700 via-pink-500 to-pink-200
+        text-white overflow-hidden
+      "
     >
-      {" "}
+      <AnimatedBlobs />
+
+      {/* STATS */}
       <Motion.div
-        class="w-full md:w-2/5 text-center md:text-left"
+        class="md:w-2/5 flex justify-center md:justify-start z-10"
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 class="text-3xl md:text-5xl font-bold leading-tight">
-          Your Reading Wrapped
-        </h1>
+        <div class="flex flex-col flex-items-center">
+          <Heading variant="h1" class="text-primary" compact>
+            Your Year At A Glance
+          </Heading>
 
-        <p class="text-base md:text-lg opacity-70 mt-1">2024</p>
-
-        <div class="mt-6 md:mt-8 space-y-3 md:space-y-4 text-sm md:text-lg">
-          <Stat label="Books read" value={totals?.total_books} />
-          <Stat label="Pages turned" value={totals?.total_pages} />
-          <Stat
-            label="Hours spent reading"
-            value={`~${totals?.total_reading_hours}`}
-          />
+          <Heading variant="h5" class="opacity-90">
+            {year}
+          </Heading>
+          <div class="flex flex-col justify-content-between w-100">
+            <For each={stats}>
+              {(stat, i) => (
+                <Stat label={stat.label}>
+                  <CountUp value={stat.value} />
+                </Stat>
+              )}
+            </For>
+          </div>
         </div>
       </Motion.div>
+
+      {/* HERO BOOKS */}
       <Motion.div
-        class="w-full md:w-3/5 flex justify-center"
+        class="w-full md:w-3/5 flex justify-center z-10 mt-8 md:mt-0"
         initial={{ opacity: 0, x: -40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
@@ -53,48 +78,39 @@ export const Slide1: Component = () => {
             max-w-xs md:max-w-lg
           "
         >
-          <For each={hero.slice(0, window.innerWidth < 400 ? 4 : 7)}>
-            {(book, i) => (
-              <Motion.div
-                class="
-                  rounded-lg md:rounded-xl
-                  overflow-hidden
-                  shadow-xl
-                  bg-neutral-700
-                  aspect-[2/3]
-                "
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i() * 0.1 }}
-              >
-                {book.coverUrl != undefined && (
+          <For each={hero.slice(0, window.innerWidth < 480 ? 4 : 6)}>
+            {(book, i) =>
+              book.coverUrl && (
+                <Motion.div
+                  class="
+                    rounded-lg md:rounded-xl
+                    overflow-hidden shadow-xl
+                    aspect-[2/3]
+                  "
+                  animate={{
+                    transform: [
+                      "translateY(0px)",
+                      "translateY(-6px)",
+                      "translateY(0px)",
+                    ],
+                  }}
+                  transition={{
+                    duration: 4 + i() * 0.3,
+                    easing: "ease-in-out",
+                    repeat: Infinity,
+                  }}
+                >
                   <img
                     src={book.coverUrl}
                     alt={book.title}
                     class="w-full h-full object-cover"
                   />
-                )}
-              </Motion.div>
-            )}
+                </Motion.div>
+              )
+            }
           </For>
         </div>
       </Motion.div>
     </section>
   );
 };
-
-const Stat: Component<{ label: string; value: string | number }> = (props) => (
-  <Motion.div
-    initial={{ opacity: 0, y: 16 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4 }}
-    class="
-      flex justify-between
-      max-w-xs md:max-w-sm
-      mx-auto md:mx-0
-    "
-  >
-    <span class="opacity-70">{props.label}</span>
-    <span class="font-semibold">{props.value}</span>
-  </Motion.div>
-);

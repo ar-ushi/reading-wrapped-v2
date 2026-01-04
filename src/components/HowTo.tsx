@@ -10,7 +10,7 @@ const HowTo: Component = (props) => {
          bg-white p-3"
       >
         <Slot name="heading">
-          <Heading variant="h6" class="text-secondary" compact>
+          <Heading variant="h6" class="text-tertiary" compact>
             Export Your Library - Goodreads
           </Heading>
         </Slot>
@@ -40,7 +40,7 @@ const HowTo: Component = (props) => {
          bg-white p-3"
       >
         <Slot name="heading">
-          <Heading variant="h6" class="text-secondary" compact>
+          <Heading variant="h6" class="text-tertiary" compact>
             Export Your Library - Storygraph
           </Heading>
         </Slot>

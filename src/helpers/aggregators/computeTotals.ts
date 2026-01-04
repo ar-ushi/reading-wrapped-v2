@@ -15,7 +15,7 @@ export function computeTotals(books: any[], allBooks: any[], year: number) {
   return {
     total_books: books.length,
     total_pages: totalPages,
-    total_reading_hours: Math.round(totalPages / 40),
+    total_reading_minutes: Math.round((totalPages / 40)*60),
     total_dnfs: allDnfs.length,
     total_dnfs_for_year: dnfsThisYear.length,
     total_rereads: filterBooks(books, "is_reread", true).length,

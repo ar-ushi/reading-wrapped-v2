@@ -13,17 +13,6 @@ code {
     monospace;
 }
 
-.text-primary{
-  color: #92487A;
-}
-.bg-primary{
-  background-color: #92487A;
-}
-
-.text-secondary{
-  color: #E49BA6;
-}
-
 .compact{
       margin-block-start: 0em;
     margin-block-end: 0em;

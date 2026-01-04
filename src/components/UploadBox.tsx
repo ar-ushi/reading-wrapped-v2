@@ -43,7 +43,7 @@ const UploadBox: Component<UploadBoxProps> = (props) => {
             onChange={handleChange}
           />
 
-          <Heading variant="h3" compact class="text-primary">
+          <Heading variant="h3" compact class="text-tertiary">
             Upload your reading data
           </Heading>
 

@@ -7,7 +7,7 @@ import {
   presetWind3,
   transformerDirectives,
   transformerVariantGroup,
-} from 'unocss'
+} from "unocss";
 
 export default defineConfig({
   shortcuts: [
@@ -15,8 +15,11 @@ export default defineConfig({
   ],
   theme: {
     colors: {
-      // ...
-    }
+      primary: "white",
+      secondary: "#b2d49fff",
+      tertiary: "#355e3dff",
+      pastelpurple: "#cfb9f3",
+    },
   },
   presets: [
     presetWind3(),
@@ -29,8 +32,5 @@ export default defineConfig({
       },
     }),
   ],
-  transformers: [
-    transformerDirectives(),
-    transformerVariantGroup(),
-  ],
-})
+  transformers: [transformerDirectives(), transformerVariantGroup()],
+});
