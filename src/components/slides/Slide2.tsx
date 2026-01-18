@@ -71,8 +71,6 @@ export const Slide2: Component = () => {
         text-white overflow-hidden
       "
     >
-      <AnimatedBlobs />
-
       <div class="flex flex-col flex-items-center">
         <Heading variant="h1" class="text-primary" compact>
           You read {totalBooks} books!

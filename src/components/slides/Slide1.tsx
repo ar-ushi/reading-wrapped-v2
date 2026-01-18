@@ -33,7 +33,7 @@ export const Slide1: Component = () => {
         relative w-full h-screen
         flex flex-col md:flex-row-reverse
         items-center justify-center
-        bg-gradient-to-b from-blue-700 via-pink-500 to-pink-200
+        bg-blue
         text-white overflow-hidden
       "
     >

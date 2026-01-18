@@ -33,7 +33,6 @@ export const Slide3: Component = () => {
         text-white overflow-hidden
       "
     >
-      <AnimatedBlobs />
       <Heading variant="h4" compact>
         {getHeading(avgPageLength)}
       </Heading>

@@ -48,7 +48,7 @@ export const Slide4: Component<{ isActive: boolean }> = (props) => {
       class="
         relative w-full h-screen
         flex flex-col items-center justify-center
-        bg-gradient-to-b from-indigo-700 via-purple-600 to-pink-400
+        bg-red
         text-white overflow-hidden
       "
     >
