@@ -24,11 +24,13 @@ export async function enrichWithCovers(books: any[]): Promise<any[]> {
 const coverCache = new Map<string, string>();
 
 async function fetchCover(book: any): Promise<string | undefined> {
-  if (coverCache.has(book.isbn)) return coverCache.get(book.isbn);
+  const key = book.isbn == 0 ? book.title : book.isbn;
+  if (coverCache.has(key)) return coverCache.get(book.isbn);
   let url;
   if (book.isbn) {
     url = `https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`;
-    coverCache.set(book.isbn, url);
+
+    coverCache.set(key, url);
     return url;
   }
 

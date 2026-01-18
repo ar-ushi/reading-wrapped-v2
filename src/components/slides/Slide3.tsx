@@ -17,13 +17,12 @@ export function getHeading(avgPages: number) {
 
 export const Slide3: Component = () => {
   const { state } = useWrappedSession();
-  const [imgOk, setImgOk] = createSignal(true);
 
   const averages = state.parsedData.averages;
   const avgPageLength = averages.avg_pages;
   const longestBook = averages?.hero.longestBook?.[0];
   const shortestBook = averages?.hero.shortestBook?.[0];
-  console.log(longestBook);
+  console.log("slayy", shortestBook);
   return (
     <section
       class="
@@ -39,7 +38,7 @@ export const Slide3: Component = () => {
         {getHeading(avgPageLength)}
       </Heading>
       <Heading variant="h1" compact>
-        You read an average of {avgPageLength} this year!
+        You read an average of {avgPageLength} pages this year!
       </Heading>
       {/* HERO STATS */}
       <div class="mt-8 flex gap-8 z-10">

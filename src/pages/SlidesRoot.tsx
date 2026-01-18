@@ -1,15 +1,22 @@
-import { Component, createSignal, onCleanup, onMount } from "solid-js";
+import {
+  Component,
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
 import { Motion } from "solid-motionone";
 import { Slide1, Slide2, Slide3, Slide4 } from "../components/slides";
+import { useKeyDownEvent } from "@solid-primitives/keyboard";
 
 const AUTO_ADVANCE_MS = 30_000;
 
 const SlidesRoot: Component<{}> = () => {
   const [index, setIndex] = createSignal(0);
   let timer: number | undefined;
+  const event = useKeyDownEvent();
 
   const slides = [Slide1, Slide2, Slide3, Slide4];
-  const Slide = slides[index()];
 
   function next() {
     setIndex((i) => Math.min(i + 1, slides.length - 1));
@@ -37,6 +44,19 @@ const SlidesRoot: Component<{}> = () => {
     if (timer) clearInterval(timer);
   });
 
+  createEffect(() => {
+    const e = event();
+    if (e) {
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        next();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        prev();
+      }
+    }
+  });
+
   return (
     <div class="w-full h-screen overflow-hidden relative">
       <Motion.div
@@ -44,9 +64,9 @@ const SlidesRoot: Component<{}> = () => {
         animate={{ transform: `translateY(-${index() * 100}vh)` }}
         transition={{ duration: 0.6, easing: "ease-in-out" }}
       >
-        {slides.map((SlideComp) => (
+        {slides.map((SlideComp, i) => (
           <div class="h-screen w-full">
-            <SlideComp />
+            <SlideComp isActive={index() === i} />
           </div>
         ))}
       </Motion.div>

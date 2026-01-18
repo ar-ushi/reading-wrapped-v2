@@ -1,63 +1,105 @@
-import { Component, createSignal, onMount, onCleanup, Show } from "solid-js";
-import { Motion, Presence } from "solid-motionone";
-import { Heading } from "../ui";
+import {
+  Component,
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
+import AnimatedBlobs from "../AnimatedBlobs";
+import { Heading, BarChart } from "../ui";
 import { useWrappedSession } from "../../providers/wrappedContext";
 
-const ERA_DURATION = 10_000;
-
-export const Slide4: Component<{ active: boolean }> = (props) => {
-  const [phase, setPhase] = createSignal<"era" | "heatmap">("era");
-  let timer: number | undefined;
+export const Slide4: Component<{ isActive: boolean }> = (props) => {
   const { state } = useWrappedSession();
+
   const { booksPerMonth, mostReadMonth } = state.parsedData.time;
-  onMount(() => {
-    if (props.active) {
-      timer = window.setTimeout(() => setPhase("heatmap"), ERA_DURATION);
-    }
+
+  const data = Object.entries(booksPerMonth).map(([month, count]) => ({
+    id: month,
+    label: month,
+    value: count,
+    season: getSeason(month),
+  }));
+  const maxValue = Math.max(...data.map((d) => d.value));
+
+  const peakMonths = data.filter((d) => d.value === maxValue);
+
+  const [mode, setMode] = createSignal<"era" | "grid">("era");
+
+  let timeoutId: number | undefined;
+
+  // createEffect(() => {
+  //   if (!props.isActive) return;
+
+  //   // RESET
+  //   setMode("era");
+
+  //   timeoutId = window.setTimeout(() => {
+  //     setMode("grid");
+  //   }, 15000);
+  // });
+
+  onCleanup(() => {
+    timeoutId && clearTimeout(timeoutId);
   });
 
-  onCleanup(() => timer && clearTimeout(timer));
-
   return (
-    <section class="relative w-full h-screen flex items-center justify-center overflow-hidden">
-      <Presence>
-        <Show when={props.active && phase() === "era"}>
-          <Motion.div
-            class="text-center z-10"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -40 }}
-            transition={{ duration: 0.8 }}
-          >
-              <Heading variant="h4" class="opacity-80">
-          Your peak reading era
-        </Heading>
+    <section
+      class="
+        relative w-full h-screen
+        flex flex-col items-center justify-center
+        bg-gradient-to-b from-indigo-700 via-purple-600 to-pink-400
+        text-white overflow-hidden
+      "
+    >
+      <AnimatedBlobs />
 
-        <Heading variant="h1" class="text-6xl md:text-8xl mt-2">
-          {mostReadMonth.toUpperCase()}
-        </Heading>
-
-
-            {/* floating stat pills here */}
-          </Motion.div>
-        </Show>
-
-        <Show when={props.active && phase() === "heatmap"}>
-          <Motion.div
-            key="heatmap"
-            class="w-full max-w-4xl px-8"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9 }}
-          >
-            <Heading variant="h4" compact>
-              Your reading rhythm
+      {/* COPY */}
+      <div class="z-10 text-center mb-12">
+        {mode() === "era" ? (
+          <>
+            <Heading variant="h1" compact>
+              {peakMonths.length === 1
+                ? `${peakMonths[0].label} was your era`
+                : `${peakMonths.map((m) => m.label).join(" & ")} were your era`}
             </Heading>
 
-            {/* Heatmap component */}
-          </Motion.div>
-        </Show>
-      </Presence>
+            <Heading variant="h6" class="opacity-80 mt-2">
+              You read {maxValue} books that month
+            </Heading>
+          </>
+        ) : (
+          <>
+            <Heading variant="h1" compact>
+              You found your reading rhythm
+            </Heading>
+            <Heading variant="h6" class="opacity-80 mt-2">
+              Some months you binged, some you rested
+            </Heading>
+          </>
+        )}
+      </div>
+
+      {/* CHART */}
+      <div class="z-10 w-4/5 max-w-xl">
+        <BarChart data={data} mode={mode()} />
+      </div>
     </section>
   );
 };
+
+function getSeason(month: String) {
+  const seasons = {
+    winter: ["december", "january", "february"],
+    spring: ["march", "april", "may"],
+    summer: ["june", "july", "august"],
+    autumn: ["september", "october", "november"],
+  };
+
+  for (const [season, months] of Object.entries(seasons)) {
+    if (months.includes(month)) {
+      return season.charAt(0).toUpperCase() + season.slice(1);
+    }
+  }
+  return null;
+}

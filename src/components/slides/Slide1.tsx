@@ -5,9 +5,11 @@ import { CountUp } from "../CountUp";
 import Stat from "../Stat";
 import AnimatedBlobs from "../AnimatedBlobs";
 import { Heading } from "../ui";
+import BookCover from "../BookCover";
 
 export const Slide1: Component = () => {
   const { state } = useWrappedSession();
+
   const totals = state.parsedData?.totals;
   const hero = totals?.hero.top5 ?? [];
   const year = state.year;
@@ -100,10 +102,10 @@ export const Slide1: Component = () => {
                     repeat: Infinity,
                   }}
                 >
-                  <img
-                    src={book.coverUrl}
-                    alt={book.title}
-                    class="w-full h-full object-cover"
+                  <BookCover
+                    coverUrl={book.coverUrl}
+                    title={book.title}
+                    author={book.author}
                   />
                 </Motion.div>
               )
